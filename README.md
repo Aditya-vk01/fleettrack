@@ -1,5 +1,9 @@
 # FleetTrack: Real-Time Delivery Tracking Platform
 
+[![CI/CD](https://github.com/Aditya-vk01/fleettrack/actions/workflows/ci.yml/badge.svg)](https://github.com/Aditya-vk01/fleettrack/actions/workflows/ci.yml)
+![Java 21](https://img.shields.io/badge/Java-21-blue)
+![Spring Boot 4.1](https://img.shields.io/badge/Spring%20Boot-4.1-brightgreen)
+
 Java 21 · Spring Boot 4.1 · PostgreSQL 16 + PostGIS · Kafka · WebSockets (STOMP) · Redis · Flyway · Micrometer/Prometheus/Grafana · Testcontainers · Docker · Kubernetes · GitHub Actions
 
 Couriers stream GPS pings. FleetTrack stores them, finds the nearest available courier for a new delivery with PostGIS, drives each delivery through a strict state machine, and fans every position out over Kafka to independent consumers (ETA, notifications, metrics, live map). Dispatchers see couriers move in real time over WebSockets.
