@@ -1,0 +1,12 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.DS_Store
+*.log
+
+# personal Claude Code settings (tutor style, local settings)
+.claude/

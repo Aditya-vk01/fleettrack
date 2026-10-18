@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: fleettrack
+    folder: FleetTrack
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

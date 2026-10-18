@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fleettrack-config
+  namespace: fleettrack
+data:
+  DB_URL: jdbc:postgresql://postgres:5432/fleettrack
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  REDIS_HOST: redis
+  DB_POOL_SIZE: "10"

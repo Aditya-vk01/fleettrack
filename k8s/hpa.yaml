@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: fleettrack
+  namespace: fleettrack
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fleettrack
+  minReplicas: 2
+  # Consumer parallelism is capped by topic partitions (6), so more pods than that add
+  # HTTP capacity but no extra Kafka throughput.
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

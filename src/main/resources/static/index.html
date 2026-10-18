@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FleetTrack Dispatcher</title>
+  <!-- Empty inline favicon: stops the browser's /favicon.ico request showing up as a 404 in metrics. -->
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; }
+    #bar { position: absolute; z-index: 1000; top: 10px; left: 50px; background: #fff; padding: 8px 12px;
+           border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.3); font-size: 14px; }
+    #map { height: 100%; }
+    .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #c00; margin-right: 6px; }
+    .dot.on { background: #0a0; }
+  </style>
+</head>
+<body>
+<div id="bar"><span id="status" class="dot"></span>FleetTrack live map &middot; <span id="count">0</span> couriers &middot; <span id="msgs">0</span> updates</div>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+<script>
+  const map = L.map('map').setView([40.7128, -74.0060], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const markers = new Map();
+  let messages = 0;
+
+  function upsert(p) {
+    const label = `Courier ${p.courierId}` + (p.speedKmh != null ? ` &middot; ${p.speedKmh.toFixed(0)} km/h` : '');
+    let m = markers.get(p.courierId);
+    if (!m) {
+      m = L.marker([p.latitude, p.longitude]).addTo(map).bindTooltip(label);
+      markers.set(p.courierId, m);
+      document.getElementById('count').textContent = markers.size;
+    } else {
+      m.setLatLng([p.latitude, p.longitude]).setTooltipContent(label);
+    }
+  }
+
+  // Seed with current positions, then switch to push updates.
+  fetch('/api/couriers').then(r => r.json()).then(list => list
+      .filter(c => c.lastLatitude != null)
+      .forEach(c => upsert({courierId: c.id, latitude: c.lastLatitude, longitude: c.lastLongitude})));
+
+  const scheme = location.protocol === 'https:' ? 'wss' : 'ws';
+  const client = new StompJs.Client({ brokerURL: `${scheme}://${location.host}/ws`, reconnectDelay: 3000 });
+  client.onConnect = () => {
+    document.getElementById('status').classList.add('on');
+    client.subscribe('/topic/couriers', msg => {
+      upsert(JSON.parse(msg.body));
+      document.getElementById('msgs').textContent = ++messages;
+    });
+  };
+  client.onWebSocketClose = () => document.getElementById('status').classList.remove('on');
+  client.activate();
+</script>
+</body>
+</html>
