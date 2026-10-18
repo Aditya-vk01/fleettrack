@@ -1,4 +1,4 @@
-# FleetTrack — Real-Time Delivery Tracking Platform
+# FleetTrack: Real-Time Delivery Tracking Platform
 
 Java 21 · Spring Boot 4.1 · PostgreSQL 16 + PostGIS · Kafka · WebSockets (STOMP) · Redis · Flyway · Micrometer/Prometheus/Grafana · Testcontainers · Docker · Kubernetes · GitHub Actions
 
