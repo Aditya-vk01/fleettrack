@@ -9,7 +9,7 @@ Java 21 · Spring Boot 4.1 · PostgreSQL 16 + PostGIS · Kafka · WebSockets (ST
 Couriers stream GPS pings. FleetTrack stores them, finds the nearest available courier for a new delivery with PostGIS, drives each delivery through a strict state machine, and fans every position out over Kafka to independent consumers (ETA, notifications, metrics, live map). Dispatchers see couriers move in real time over WebSockets.
 
 ```mermaid
-flowchart LR
+flowchart TB
     C[Courier app] -- POST /locations --> API
     D[Dispatcher] -- REST --> API
     API[(Spring Boot API)] -- write --> PG[(PostgreSQL + PostGIS)]
